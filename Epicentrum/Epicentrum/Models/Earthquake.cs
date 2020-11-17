@@ -6,12 +6,12 @@ using System.Text.Json.Serialization;
 
 namespace Epicentrum.Models
 {
-    public class Feature
+    public class Earthquake
     {
         [JsonPropertyName("attributes")]
         public Attributes Attributes { get; set; }
 
         [JsonPropertyName("geometry")]
-        public Geometry Geometry {get;set;}
+        public Epicentrum Epicentrum {get;set;}
     }
 }

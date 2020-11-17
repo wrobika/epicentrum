@@ -9,6 +9,6 @@ namespace Epicentrum.Models
     public class ArcGisData
     {
         [JsonPropertyName("features")]
-        public IList<Feature> Features { get; set; }
+        public IList<Earthquake> Earthquakes { get; set; }
     }
 }

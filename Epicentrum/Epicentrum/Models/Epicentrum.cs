@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Epicentrum.Models
 {
-    public class Geometry
+    public class Epicentrum
     {
         [JsonPropertyName("y")]
         public double Latitude { get; set; }

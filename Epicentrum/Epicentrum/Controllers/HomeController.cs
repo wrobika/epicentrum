@@ -13,20 +13,18 @@ namespace Epicentrum.Controllers
 {
     public class HomeController : Controller
     {
-        public ArcGisData EarthquakesData { get; private set; }
         private readonly ILogger<HomeController> _logger;
-        private readonly IHttpClientFactory _clientFactory;
+        private readonly EarthquakeController _earthquakeController;
 
         public HomeController(ILogger<HomeController> logger, IHttpClientFactory clientFactory)
         {
             _logger = logger;
-            _clientFactory = clientFactory;
+            _earthquakeController = new EarthquakeController(clientFactory);
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            await DownloadData();
-            ViewBag.Text = EarthquakesData.Features.FirstOrDefault().Geometry.Longitude.ToString();
+            ViewBag.Text = _earthquakeController.Earthquakes.LastOrDefault().Epicentrum.Longitude.ToString();
             return View();
         }
 
@@ -39,27 +37,6 @@ namespace Epicentrum.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        private async Task DownloadData()
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get,
-           "https://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Earthquakes/Since_1970/MapServer/0/query?where=1%3D1&outFields=*&f=json");
-
-            var client = _clientFactory.CreateClient();
-            var response = await client.SendAsync(request);
-
-            if (response.IsSuccessStatusCode)
-                await DeserializeData(response);
-            else
-                EarthquakesData.Features = Array.Empty<Feature>();
-        }
-
-        private async Task DeserializeData(HttpResponseMessage response)
-        {
-            using var responseStream = await response.Content.ReadAsStreamAsync();
-            EarthquakesData = await JsonSerializer.DeserializeAsync
-                <ArcGisData>(responseStream);
         }
     }
 }
