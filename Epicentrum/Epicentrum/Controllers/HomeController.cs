@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Epicentrum.Controllers
@@ -24,7 +23,6 @@ namespace Epicentrum.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.Text = _earthquakeController.Earthquakes.LastOrDefault().Epicentrum.Longitude.ToString();
             return View();
         }
 
