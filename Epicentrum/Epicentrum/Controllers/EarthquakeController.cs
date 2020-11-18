@@ -1,7 +1,13 @@
 ﻿using Epicentrum.Models;
+using GeoAPI.Geometries;
 using Microsoft.AspNetCore.Mvc;
+using NetTopologySuite.Features;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.IO;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
@@ -17,8 +23,19 @@ namespace Epicentrum.Controllers
         public EarthquakeController(IHttpClientFactory clientFactory)
         {
             _clientFactory = clientFactory;
-            var task = Task.Run(async () => { await DownloadData(); });
-            task.Wait();
+            Task.Run(async () => { await DownloadData(); })
+                .Wait();
+        }
+
+        public string GetEpicentrumsGeoJson()
+        {
+            FeatureCollection featureCollection = ToFeatureCollection(Earthquakes);
+
+            var serializer = GeoJsonSerializer.Create();
+            using var stringWriter = new StringWriter();
+            using var jsonWriter = new JsonTextWriter(stringWriter);
+            serializer.Serialize(jsonWriter, featureCollection);
+            return stringWriter.ToString();
         }
 
         private async Task DownloadData()
@@ -39,10 +56,19 @@ namespace Epicentrum.Controllers
         {
             using var responseStream = await response.Content
                 .ReadAsStreamAsync();
-            Earthquakes = JsonSerializer
+            Earthquakes = System.Text.Json.JsonSerializer
                 .DeserializeAsync<ArcGisData>(responseStream)
                 .Result
                 .Earthquakes;
+        }
+
+        private FeatureCollection ToFeatureCollection(IList<Earthquake> earthquakes)
+        {
+            IEnumerable<Feature> features = earthquakes.Select(item => item.ToFeature());
+            FeatureCollection featureCollection = new FeatureCollection();
+            foreach (var item in features)
+                featureCollection.Add(item);
+            return featureCollection;
         }
     }
 }
