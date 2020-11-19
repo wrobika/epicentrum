@@ -3,19 +3,17 @@
 }
 
 <div class="text-center">
-    <div id="map" class="map"></div>
-    <script>
-        var map = new ol.Map({
-            target: 'map',
-            layers: [
-                new ol.layer.Tile({
-                    source: new ol.source.OSM()
-                })
-            ],
-            view: new ol.View({
-                center: ol.proj.fromLonLat([37.41, 8.82]),
-                zoom: 4
-            })
-        });
-    </script>
+    <div id="map" class="map">
+        <nav class="navbar navbar-light bg-white">
+            <form class="form-inline ml-auto">
+                <button id="earthquake" type="button" class="btn btn-success m-1" data-toggle="modal" data-target="#earthquakeModal"></button>
+            </form>
+            @{
+                await Html.RenderPartialAsync("_EarthquakeModal", new EarthquakeViewModel());
+            }
+        </nav>
+    </div>
+    @{
+        await Html.RenderPartialAsync("_Map");
+    }
 </div>

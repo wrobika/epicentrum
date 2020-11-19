@@ -1,0 +1,33 @@
+﻿<script>
+    @{
+        @inject System.Net.Http.IHttpClientFactory clientFactory;
+        var earthquakeController = new Epicentrum.Controllers.EarthquakeController(clientFactory);
+        var epicentrumGeojson = earthquakeController.GetEpicentrumsGeoJson();
+    }
+
+    var geojsonReader = new ol.format.GeoJSON();
+    var epicentrumGeojson = @Html.Raw(Json.Serialize(epicentrumGeojson));
+    var epicentrumFeatures = geojsonReader.readFeatures(epicentrumGeojson);
+    epicentrumFeatures.forEach(feature => feature.getGeometry().transform('EPSG:4326', 'EPSG:3857'));
+
+    var epicentrumSource = new ol.source.Vector({
+        features: epicentrumFeatures
+    });
+
+    var epicentrumLayer = new ol.layer.Vector({
+        source: epicentrumSource
+    });
+
+    var backgroundLayer = new ol.layer.Tile({
+        source: new ol.source.OSM()
+    });
+
+    var map = new ol.Map({
+        target: 'map',
+        layers: [backgroundLayer, epicentrumLayer],
+        view: new ol.View({
+            center: ol.proj.fromLonLat([0, 0]),
+            zoom: 1
+        })
+    });
+</script>

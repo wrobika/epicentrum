@@ -14,7 +14,7 @@ namespace Epicentrum.Models
         public Attributes Attributes { get; set; }
 
         [JsonPropertyName("geometry")]
-        public Epicentrum Epicentrum { get; set; }
+        public Location Epicentrum { get; set; }
 
         private const string ID = "id";
         private const string MAGNITUDE = "magnitude";

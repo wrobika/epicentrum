@@ -13,12 +13,10 @@ namespace Epicentrum.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly EarthquakeController _earthquakeController;
 
-        public HomeController(ILogger<HomeController> logger, IHttpClientFactory clientFactory)
+        public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            _earthquakeController = new EarthquakeController(clientFactory);
         }
 
         public IActionResult Index()
