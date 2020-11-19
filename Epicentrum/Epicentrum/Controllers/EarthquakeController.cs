@@ -38,6 +38,12 @@ namespace Epicentrum.Controllers
             return stringWriter.ToString();
         }
 
+        public EarthquakeViewModel Details(int id)
+        {
+            return Earthquakes.Where(item => item.Attributes.Id == id)
+                .FirstOrDefault().ToViewModel();
+        }
+
         private async Task DownloadData()
         {
             var request = new HttpRequestMessage(HttpMethod.Get,

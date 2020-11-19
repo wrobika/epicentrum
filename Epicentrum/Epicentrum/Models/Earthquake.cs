@@ -30,5 +30,16 @@ namespace Epicentrum.Models
             };
             return new Feature(point, properties);
         }
+
+        public EarthquakeViewModel ToViewModel()
+        {
+            return new EarthquakeViewModel
+            {
+                Country = Attributes.Location,
+                Place = Attributes.Location,
+                Magnitude = Attributes.Magnitude,
+                Deaths = Attributes.Deaths
+            };
+        }
     }
 }

@@ -14,16 +14,8 @@
         features: epicentrumFeatures
     });
 
-    var epicentrumClusterSource = new ol.source.Cluster({
-        distance: 30,
-        source: epicentrumSource
-    });
-
     var epicentrumLayer = new ol.layer.Vector({
-        source: epicentrumClusterSource,
-        style: function (feature) {
-            return clusterStyle(feature);
-        }
+        source: epicentrumSource,
     });
 
     var backgroundLayer = new ol.layer.Tile({
@@ -41,11 +33,12 @@
 
     function customizeFeature(feature) {
         feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-        return setFeatureStyle(feature);
+        feature.setStyle(getStyle(feature));
+        return feature;
     }
 
-    function setFeatureStyle(feature) {
-        feature.setStyle(new ol.style.Style({
+    function getStyle(feature) {
+        return new ol.style.Style({
             image: new ol.style.Circle({
                 radius: 8,
                 stroke: new ol.style.Stroke({
@@ -55,32 +48,37 @@
                     color: feature.get('color')
                 })
             })
-        }));
-        return feature;
+        });
     }
 
-    function clusterStyle(feature) {
-        var style = feature.get('features')[0].getStyle();
-        var size = feature.get('features').length;
-        if (size !== 1) {
-            style = new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 15,
-                    stroke: new ol.style.Stroke({
-                        color: 'black'
-                    }),
-                    fill: new ol.style.Fill({
-                        color: 'white'
-                    })
-                }),
-                text: new ol.style.Text({
-                    text: size.toString(),
-                    fill: new ol.style.Fill({
-                        color: 'black'
-                    })
-                })
-            });
-        }
-        return style;
+    var epicentrumInteraction = new ol.interaction.Select({
+        condition: ol.events.condition.click,
+        layers: [epicentrumLayer]
+    });
+
+    map.addInteraction(epicentrumInteraction);
+
+    epicentrumInteraction.on('select', function (event) {
+        getInfo(event);
+    });
+
+    function getInfo(event) {
+        var selectedFeature = event.selected[0];
+        $.ajax({
+            contentType: "application/json; charset=utf-8",
+            type: "GET",
+            url: "/Earthquake/Details/" + selectedFeature.getId(),
+            success: function (details) { fillModal(details) },
+            error: function (jqXHR) { console.log(jqXHR) }
+        });
+    }
+
+    function fillModal(details) {
+        document.getElementById('date').innerText = details.date;
+        document.getElementById('country').innerText = details.country;
+        document.getElementById('place').innerText = details.place;
+        document.getElementById('magnitude').innerText = details.magnitude;
+        document.getElementById('deaths').innerHTML = details.deaths;
+        document.getElementById('earthquake').click();
     }
 </script>
