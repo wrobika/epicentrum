@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 using System.Threading.Tasks;
 
 namespace Epicentrum.Controllers
@@ -56,15 +56,16 @@ namespace Epicentrum.Controllers
         {
             using var responseStream = await response.Content
                 .ReadAsStreamAsync();
-            Earthquakes = System.Text.Json.JsonSerializer
-                .DeserializeAsync<ArcGisData>(responseStream)
-                .Result
-                .Earthquakes;
+            Earthquakes = JsonSerializer
+                .DeserializeAsync<RawData>(responseStream)
+                .Result.Earthquakes;
         }
 
         private FeatureCollection ToFeatureCollection(IList<Earthquake> earthquakes)
         {
-            IEnumerable<Feature> features = earthquakes.Select(item => item.ToFeature());
+            IEnumerable<Feature> features = earthquakes
+                .Where(item => item.Attributes.Magnitude.HasValue)
+                .Select(item => item.ToFeature());
             FeatureCollection featureCollection = new FeatureCollection();
             foreach (var item in features)
                 featureCollection.Add(item);

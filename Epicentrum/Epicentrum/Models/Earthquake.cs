@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json.Serialization;
 using NetTopologySuite.Features;
-using NetTopologySuite.Geometries;
+using Point = NetTopologySuite.Geometries.Point;
+using System.Drawing;
 
 namespace Epicentrum.Models
 {
@@ -14,18 +15,18 @@ namespace Epicentrum.Models
         public Attributes Attributes { get; set; }
 
         [JsonPropertyName("geometry")]
-        public Location Epicentrum { get; set; }
+        public Geolocation Epicentrum { get; set; }
 
         private const string ID = "id";
-        private const string MAGNITUDE = "magnitude";
+        private const string COLOR = "color";
 
         public Feature ToFeature()
         {
             Point point = new Point(this.Epicentrum.Longitude, this.Epicentrum.Latitude);
             AttributesTable properties = new AttributesTable
             {
-                { ID, this.Attributes.Id },
-                { MAGNITUDE, this.Attributes.Magnitude }
+                { ID, Attributes.Id },
+                { COLOR, EpicentrumColor.FromMagnitude(Attributes.Magnitude) }
             };
             return new Feature(point, properties);
         }

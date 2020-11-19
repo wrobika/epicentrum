@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Epicentrum.Models
 {
-    public class ArcGisData
+    public class RawData
     {
         [JsonPropertyName("features")]
         public IList<Earthquake> Earthquakes { get; set; }
