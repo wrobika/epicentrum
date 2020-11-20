@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace Epicentrum.Controllers
 {
-    public class DTOController : Controller
+    internal class DTOController : Controller
     {
         private readonly string _dataFilePath;
 
-        public DTOController(IWebHostEnvironment webHostEnvironment)
+        internal DTOController(IWebHostEnvironment webHostEnvironment)
         {
             _dataFilePath = webHostEnvironment.WebRootPath + "/earthquakes.json";
         }
 
-        public IDictionary<int, Earthquake> GetEarthquakes()
+        internal IDictionary<int, Earthquake> GetEarthquakes()
         {
             if (System.IO.File.Exists(_dataFilePath))
                 return DeserializeData();
@@ -28,8 +28,9 @@ namespace Epicentrum.Controllers
 
         private IDictionary<int, Earthquake> DeserializeData()
         {
+            string json = System.IO.File.ReadAllText(_dataFilePath);
             return JsonConvert
-               .DeserializeObject<DTO>(System.IO.File.ReadAllText(_dataFilePath))
+               .DeserializeObject<DTO>(json)
                .Features
                .ToDictionary(feature => feature.Attributes.Id, feature => feature.ToEarthquake()); ;
         }

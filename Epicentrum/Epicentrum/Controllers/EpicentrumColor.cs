@@ -12,14 +12,14 @@ namespace Epicentrum.Models
         {
             const int maxRGB = 255;
             const int minRGB = 0;
-            const double avgMagnitude = 4.5;
+            const double magnitudeAverage = 4.5;
             int red = 255;
             int green = 0;
 
-            if (magnitude < avgMagnitude)
-                green = (int)(maxRGB - maxRGB / avgMagnitude * magnitude);
+            if (magnitude < magnitudeAverage)
+                green = (int)(maxRGB - maxRGB / magnitudeAverage * magnitude);
             else
-                red = (int)(maxRGB - maxRGB / avgMagnitude * (magnitude-avgMagnitude));
+                red = (int)(maxRGB - maxRGB / magnitudeAverage * (magnitude-magnitudeAverage));
 
             Color color = Color.FromArgb(red, green, minRGB);
             return ColorTranslator.ToHtml(color);
