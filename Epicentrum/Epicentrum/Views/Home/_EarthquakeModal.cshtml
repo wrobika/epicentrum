@@ -1,4 +1,4 @@
-﻿@model Epicentrum.Models.EarthquakeViewModel
+﻿@model Epicentrum.Models.Earthquake
 
 <div class="modal fade bd-example-modal-lg" id="earthquakeModal" tabindex="-1" role="dialog" aria-labelledby="earthquakeLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -9,37 +9,31 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body text-left">
                 <div>
                     <dl class="row">
-                        <dt class="col-sm-6">
+                        <dt class="col-sm-4">
                             @Html.DisplayNameFor(model => model.Date)
                         </dt>
-                        <dd class="col-sm-6" id="date">
+                        <dd class="col-sm-8" id="date">
                             @Html.DisplayFor(model => model.Date)
                         </dd>
-                        <dt class="col-sm-6">
-                            @Html.DisplayNameFor(model => model.Country)
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Location)
                         </dt>
-                        <dd class="col-sm-6" id="country">
-                            @Html.DisplayFor(model => model.Country)
+                        <dd class="col-sm-8" id="location">
+                            @Html.DisplayFor(model => model.Location)
                         </dd>
-                        <dt class="col-sm-6">
-                            @Html.DisplayNameFor(model => model.Place)
-                        </dt>
-                        <dd class="col-sm-6" id="place">
-                            @Html.DisplayFor(model => model.Place)
-                        </dd>
-                        <dt class="col-sm-6">
+                        <dt class="col-sm-4">
                             @Html.DisplayNameFor(model => model.Magnitude)
                         </dt>
-                        <dd class="col-sm-6" id="magnitude">
+                        <dd class="col-sm-8" id="magnitude">
                             @Html.DisplayFor(model => model.Magnitude)
                         </dd>
-                        <dt class="col-sm-6">
+                        <dt class="col-sm-4">
                             @Html.DisplayNameFor(model => model.Deaths)
                         </dt>
-                        <dd class="col-sm-6" id="deaths">
+                        <dd class="col-sm-8" id="deaths">
                             @Html.DisplayFor(model => model.Deaths)
                         </dd>
                     </dl>

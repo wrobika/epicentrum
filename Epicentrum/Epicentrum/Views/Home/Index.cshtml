@@ -9,7 +9,7 @@
                 <button style="display:none;" id="earthquake" type="button" class="btn btn-success m-1" data-toggle="modal" data-target="#earthquakeModal"></button>
             </form>
             @{
-                await Html.RenderPartialAsync("_EarthquakeModal", new EarthquakeViewModel());
+                await Html.RenderPartialAsync("_EarthquakeModal", new Earthquake());
             }
         </nav>
     </div>

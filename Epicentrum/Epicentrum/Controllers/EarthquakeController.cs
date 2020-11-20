@@ -1,8 +1,6 @@
 ﻿using Epicentrum.Models;
-using GeoAPI.Geometries;
 using Microsoft.AspNetCore.Mvc;
 using NetTopologySuite.Features;
-using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 using Newtonsoft.Json;
 using System;
@@ -17,7 +15,7 @@ namespace Epicentrum.Controllers
 {
     public class EarthquakeController : Controller
     {
-        public IList<Earthquake> Earthquakes { get; private set; }
+        public IDictionary<int, Earthquake> Earthquakes { get; private set; }
         private readonly IHttpClientFactory _clientFactory;
 
         public EarthquakeController(IHttpClientFactory clientFactory)
@@ -38,10 +36,9 @@ namespace Epicentrum.Controllers
             return stringWriter.ToString();
         }
 
-        public EarthquakeViewModel Details(int id)
+        public Earthquake Details(int id)
         {
-            return Earthquakes.Where(item => item.Attributes.Id == id)
-                .FirstOrDefault().ToViewModel();
+            return Earthquakes[id];
         }
 
         private async Task DownloadData()
@@ -55,7 +52,7 @@ namespace Epicentrum.Controllers
             if (response.IsSuccessStatusCode)
                 await DeserializeData(response);
             else
-                Earthquakes = Array.Empty<Earthquake>();
+                Earthquakes = new Dictionary<int, Earthquake>();
         }
 
         private async Task DeserializeData(HttpResponseMessage response)
@@ -63,14 +60,15 @@ namespace Epicentrum.Controllers
             using var responseStream = await response.Content
                 .ReadAsStreamAsync();
             Earthquakes = JsonSerializer
-                .DeserializeAsync<RawData>(responseStream)
-                .Result.Earthquakes;
+                .DeserializeAsync<DTO>(responseStream)
+                .Result.Features
+                .ToDictionary(feature => feature.Attributes.Id, feature => feature.ToEarthquake());
         }
 
-        private FeatureCollection ToFeatureCollection(IList<Earthquake> earthquakes)
+        private FeatureCollection ToFeatureCollection(IDictionary<int,Earthquake> earthquakes)
         {
-            IEnumerable<Feature> features = earthquakes
-                .Where(item => item.Attributes.Magnitude.HasValue)
+            IEnumerable<Feature> features = earthquakes.Values
+                .Where(item => item.Magnitude.HasValue)
                 .Select(item => item.ToFeature());
             FeatureCollection featureCollection = new FeatureCollection();
             foreach (var item in features)

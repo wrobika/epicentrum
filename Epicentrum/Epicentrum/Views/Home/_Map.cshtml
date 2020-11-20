@@ -59,10 +59,10 @@
     map.addInteraction(epicentrumInteraction);
 
     epicentrumInteraction.on('select', function (event) {
-        getInfo(event);
+        getDetails(event);
     });
 
-    function getInfo(event) {
+    function getDetails(event) {
         var selectedFeature = event.selected[0];
         $.ajax({
             contentType: "application/json; charset=utf-8",
@@ -75,8 +75,7 @@
 
     function fillModal(details) {
         document.getElementById('date').innerText = details.date;
-        document.getElementById('country').innerText = details.country;
-        document.getElementById('place').innerText = details.place;
+        document.getElementById('location').innerText = details.location;
         document.getElementById('magnitude').innerText = details.magnitude;
         document.getElementById('deaths').innerHTML = details.deaths;
         document.getElementById('earthquake').click();
