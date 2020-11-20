@@ -33,7 +33,6 @@ namespace Epicentrum.Models
                 Latitude = Geolocation.Latitude,
                 Longitude = Geolocation.Longitude,
                 Date = DateTime.ParseExact(Attributes.Date, "yyyyMMdd", CultureInfo.InvariantCulture)
-                    .ToShortDateString()
             };
         }
     }

@@ -2,22 +2,19 @@
     @{
         @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment environment;
         var earthquakeController = new Epicentrum.Controllers.EarthquakeController(environment);
-        var epicentrumGeojson = earthquakeController.GetEpicentrumsGeoJson();
+        var epicentrumGeojson = earthquakeController.GetEpicentrums();
     }
 
-    var geojsonReader = new ol.format.GeoJSON();
     var epicentrumGeojson = @Html.Raw(Json.Serialize(epicentrumGeojson));
-    var epicentrumFeatures = geojsonReader.readFeatures(epicentrumGeojson);
-    epicentrumFeatures.forEach(customizeFeature);
 
     var epicentrumSource = new ol.source.Vector({
-        features: epicentrumFeatures
+        features: getFeatures(epicentrumGeojson)
     });
 
     var epicentrumLayer = new ol.layer.Vector({
         source: epicentrumSource,
     });
-
+    
     var backgroundLayer = new ol.layer.Tile({
         source: new ol.source.OSM()
     });
@@ -30,6 +27,13 @@
             zoom: 1
         })
     });
+
+    function getFeatures(geojson) {
+        var geojsonReader = new ol.format.GeoJSON();
+        var features = geojsonReader.readFeatures(geojson);
+        features.forEach(customizeFeature);
+        return features;
+    }
 
     function customizeFeature(feature) {
         feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
@@ -74,10 +78,44 @@
     }
 
     function fillModal(details) {
-        document.getElementById('date').innerText = details.date;
+        document.getElementById('date').innerText = details.date.substring(0, details.date.indexOf('T'));
         document.getElementById('location').innerText = details.location;
         document.getElementById('magnitude').innerText = details.magnitude;
         document.getElementById('deaths').innerHTML = details.deaths;
         document.getElementById('earthquake').click();
     }
+
+    function applyFilter() {
+        var year = $('#yearFilter').val();
+        var deaths = $('#deathsFilter').val();
+        var url = "/Earthquake/GetEpicentrumsBy?year=" + year + "&deaths=" + deaths;
+        getRequest(url);
+        $('#filterModal').modal('hide');
+    }
+
+    function removeFilter() {
+        var url = "/Earthquake/GetEpicentrums";
+        getRequest(url);
+        $('#filterModal').modal('hide');
+        $('#yearFilter').val("");
+        $('#deathsFilter').val("");
+    }
+
+    function getRequest(url) {
+        $.ajax({
+            contentType: "application/json; charset=utf-8",
+            type: "GET",
+            url: url,
+            cache: false,
+            success: function (data) { reloadFeatures(data) },
+            error: function (jqXHR) { console.log(jqXHR) }
+        });
+    }
+
+    function reloadFeatures(geojson) {
+        var newFeatures = getFeatures(geojson);
+        epicentrumLayer.getSource().clear();
+        epicentrumLayer.getSource().addFeatures(newFeatures);
+    }
+
 </script>

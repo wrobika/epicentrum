@@ -2,18 +2,12 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <div id="map" class="map">
-        <nav class="navbar navbar-light bg-white">
-            <form class="form-inline ml-auto">
-                <button style="display:none;" id="earthquake" type="button" class="btn btn-success m-1" data-toggle="modal" data-target="#earthquakeModal"></button>
-            </form>
-            @{
-                await Html.RenderPartialAsync("_EarthquakeModal", new Earthquake());
-            }
-        </nav>
-    </div>
+<div>
+    <button id="filter" type="button" class="btn btn-secondary" data-toggle="modal" data-target="#filterModal">Filter</button>
+    <div id="map" class="map"></div>
     @{
         await Html.RenderPartialAsync("_Map");
+        await Html.RenderPartialAsync("_FilterModal", new Filter());
+        await Html.RenderPartialAsync("_EarthquakeModal", new Earthquake());
     }
 </div>

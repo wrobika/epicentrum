@@ -22,15 +22,19 @@ namespace Epicentrum.Controllers
             Earthquakes = dtoController.GetEarthquakes();
         }
 
-        public string GetEpicentrumsGeoJson()
+        public string GetEpicentrums()
         {
-            FeatureCollection featureCollection = ToFeatureCollection(Earthquakes);
+            return ToGeoJson(Earthquakes);
+        }
 
-            var serializer = GeoJsonSerializer.Create();
-            using var stringWriter = new StringWriter();
-            using var jsonWriter = new JsonTextWriter(stringWriter);
-            serializer.Serialize(jsonWriter, featureCollection);
-            return stringWriter.ToString();
+        public string GetEpicentrumsBy(int year, int deaths)
+        {
+            IEnumerable<KeyValuePair<int, Earthquake>> filteredEarthquakes = Earthquakes;
+            if (year != 0)
+                filteredEarthquakes = filteredEarthquakes.Where(item => item.Value.Date.Year == year);
+            if (deaths != 0)
+                filteredEarthquakes = filteredEarthquakes.Where(item => item.Value.Deaths == deaths);
+            return ToGeoJson(filteredEarthquakes);
         }
 
         public Earthquake Details(int id)
@@ -38,11 +42,21 @@ namespace Epicentrum.Controllers
             return Earthquakes[id];
         }
 
-        private FeatureCollection ToFeatureCollection(IDictionary<int,Earthquake> earthquakes)
+        private string ToGeoJson(IEnumerable<KeyValuePair<int, Earthquake>> earthquakes)
         {
-            IEnumerable<Feature> features = earthquakes.Values
-                .Where(item => item.Magnitude.HasValue)
-                .Select(item => item.ToFeature());
+            FeatureCollection featureCollection = ToFeatureCollection(earthquakes);
+
+            var serializer = GeoJsonSerializer.Create();
+            using var stringWriter = new StringWriter();
+            using var jsonWriter = new JsonTextWriter(stringWriter);
+            serializer.Serialize(jsonWriter, featureCollection);
+            return stringWriter.ToString();
+        }
+        private FeatureCollection ToFeatureCollection(IEnumerable<KeyValuePair<int,Earthquake>> earthquakes)
+        {
+            IEnumerable<Feature> features = earthquakes
+                .Where(item => item.Value.Magnitude.HasValue)
+                .Select(item => item.Value.ToFeature());
             FeatureCollection featureCollection = new FeatureCollection();
             foreach (var item in features)
                 featureCollection.Add(item);
