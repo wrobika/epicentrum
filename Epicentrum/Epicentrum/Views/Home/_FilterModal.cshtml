@@ -1,7 +1,7 @@
 ﻿@model Epicentrum.Models.Filter
 
 <div class="modal fade bd-filter-modal-lg" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="filterModalLabel">Filter by</h5>
@@ -10,23 +10,21 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <form asp-action="GetEpicentrumsBy">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="form-group col-sm-12">
-                            <label asp-for="Year" class="control-label"></label>
-                            <input id="yearFilter" asp-for="Year" class="form-control" />
-                            <span asp-validation-for="Year" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="Deaths" class="control-label"></label>
-                            <input id="deathsFilter" asp-for="Deaths" class="form-control" />
-                            <span asp-validation-for="Deaths" class="text-danger"></span>
-                        </div>
-                        <button id="filterSubmit" type="button" class="btn btn-success btn-block" onclick="applyFilter()">Apply filters</button>
-                        <button id="filterRemove" type="button" class="btn btn-danger btn-block" onclick="removeFilter()">Remove filters</button>
-                    </form>
-                </div>
+                <form asp-action="GetEpicentrumsBy">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Year" class="control-label"></label>
+                        <input id="yearFilter" asp-for="Year" class="form-control" />
+                        <span asp-validation-for="Year" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Deaths" class="control-label"></label>
+                        <input id="deathsFilter" asp-for="Deaths" class="form-control" />
+                        <span asp-validation-for="Deaths" class="text-danger"></span>
+                    </div>
+                    <button id="filterSubmit" type="button" class="btn btn-danger btn-block" onclick="applyFilter()">Apply filters</button>
+                    <button id="filterRemove" type="button" class="btn btn-dark btn-block" onclick="removeFilter()">Remove filters</button>
+                </form>
             </div>
         </div>
     </div>

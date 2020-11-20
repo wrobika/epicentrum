@@ -11,12 +11,20 @@
         features: getFeatures(epicentrumGeojson)
     });
 
+    var epicentrumClusterSource = new ol.source.Cluster({
+        distance: 20,
+        source: epicentrumSource
+    });
+
     var epicentrumLayer = new ol.layer.Vector({
-        source: epicentrumSource,
+        source: epicentrumClusterSource,
+        style: feature => { return getProperStyle(feature) }
     });
     
     var backgroundLayer = new ol.layer.Tile({
-        source: new ol.source.OSM()
+        source: new ol.source.XYZ({
+            url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+        }),
     });
 
     var map = new ol.Map({
@@ -37,13 +45,14 @@
 
     function customizeFeature(feature) {
         feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-        feature.setStyle(getStyle(feature));
+        feature.setStyle(getSingleStyle(feature));
         return feature;
     }
 
-    function getStyle(feature) {
+    function getSingleStyle(feature) {
         return new ol.style.Style({
-            image: new ol.style.Circle({
+            image: new ol.style.RegularShape({
+                points: 5,
                 radius: 8,
                 stroke: new ol.style.Stroke({
                     color: 'white'
@@ -55,25 +64,56 @@
         });
     }
 
+    function getClusterStyle(feature, size) {
+        return new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 10 + Math.sqrt(size),
+                fill: new ol.style.Fill({
+                    color: '#dc3545'
+                })
+            }),
+            text: new ol.style.Text({
+                text: size.toString(),
+                fill: new ol.style.Fill({
+                    color: 'white'
+                })
+            })
+        });
+    }
+
+    function getProperStyle(feature) {
+        var style = feature.get('features')[0].getStyle();
+        var size = feature.get('features').length;
+        if (size !== 1)
+            style = getClusterStyle(feature, size);
+        return style;
+    }
+
     var epicentrumInteraction = new ol.interaction.Select({
         condition: ol.events.condition.click,
-        layers: [epicentrumLayer]
+        layers: [epicentrumLayer],
+        style: false
     });
 
     map.addInteraction(epicentrumInteraction);
-
-    epicentrumInteraction.on('select', function (event) {
-        getDetails(event);
-    });
+    epicentrumInteraction.on('select', event => getDetails(event) );
 
     function getDetails(event) {
-        var selectedFeature = event.selected[0];
+        var selectedFeature = getSingleFeature(event);
+        if (selectedFeature) {
+            var url = "/Earthquake/Details/" + selectedFeature.getId();
+            getRequest(url, fillModal);
+        }
+    }
+
+    function getRequest(url, succesFunction) {
         $.ajax({
             contentType: "application/json; charset=utf-8",
             type: "GET",
-            url: "/Earthquake/Details/" + selectedFeature.getId(),
-            success: function (details) { fillModal(details) },
-            error: function (jqXHR) { console.log(jqXHR) }
+            url: url,
+            cache: false,
+            success: data => { succesFunction(data) },
+            error: jqXHR => { console.log(jqXHR) }
         });
     }
 
@@ -85,37 +125,35 @@
         document.getElementById('earthquake').click();
     }
 
+    function getSingleFeature(event) {
+        if (event.selected.length) {
+            var selectedFeatures = event.selected[0].get('features')
+            if (selectedFeatures.length === 1)
+                return selectedFeatures[0];
+        }
+        return null;
+    }
+
     function applyFilter() {
         var year = $('#yearFilter').val();
         var deaths = $('#deathsFilter').val();
         var url = "/Earthquake/GetEpicentrumsBy?year=" + year + "&deaths=" + deaths;
-        getRequest(url);
+        getRequest(url, reloadFeatures);
         $('#filterModal').modal('hide');
     }
 
     function removeFilter() {
         var url = "/Earthquake/GetEpicentrums";
-        getRequest(url);
+        getRequest(url, reloadFeatures);
         $('#filterModal').modal('hide');
         $('#yearFilter').val("");
         $('#deathsFilter').val("");
     }
 
-    function getRequest(url) {
-        $.ajax({
-            contentType: "application/json; charset=utf-8",
-            type: "GET",
-            url: url,
-            cache: false,
-            success: function (data) { reloadFeatures(data) },
-            error: function (jqXHR) { console.log(jqXHR) }
-        });
-    }
-
     function reloadFeatures(geojson) {
         var newFeatures = getFeatures(geojson);
-        epicentrumLayer.getSource().clear();
-        epicentrumLayer.getSource().addFeatures(newFeatures);
+        epicentrumLayer.getSource().getSource().clear();
+        epicentrumLayer.getSource().getSource().addFeatures(newFeatures);
     }
 
 </script>

@@ -10,12 +10,18 @@ namespace Epicentrum.Models
     {
         public static string FromMagnitude(double? magnitude)
         {
-            const int minRGB = 0;
             const int maxRGB = 255;
-            const int numOfRanges = 9;
+            const int minRGB = 0;
+            const double avgMagnitude = 4.5;
+            int red = 255;
+            int green = 0;
 
-            int green = (int)(maxRGB - maxRGB / numOfRanges * magnitude);
-            Color color = Color.FromArgb(maxRGB, green, minRGB);
+            if (magnitude < avgMagnitude)
+                green = (int)(maxRGB - maxRGB / avgMagnitude * magnitude);
+            else
+                red = (int)(maxRGB - maxRGB / avgMagnitude * (magnitude-avgMagnitude));
+
+            Color color = Color.FromArgb(red, green, minRGB);
             return ColorTranslator.ToHtml(color);
         }
     }

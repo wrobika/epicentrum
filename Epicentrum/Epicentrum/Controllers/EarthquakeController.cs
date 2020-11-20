@@ -14,22 +14,22 @@ namespace Epicentrum.Controllers
 {
     public class EarthquakeController : Controller
     {
-        public IDictionary<int, Earthquake> Earthquakes { get; private set; }
+        private readonly IDictionary<int, Earthquake> _earthquakes;
 
         public EarthquakeController(IWebHostEnvironment webHostEnvironment)
         {
             DTOController dtoController = new DTOController(webHostEnvironment);
-            Earthquakes = dtoController.GetEarthquakes();
+            _earthquakes = dtoController.GetEarthquakes();
         }
 
         public string GetEpicentrums()
         {
-            return ToGeoJson(Earthquakes);
+            return ToGeoJson(_earthquakes);
         }
 
         public string GetEpicentrumsBy(int year, int deaths)
         {
-            IEnumerable<KeyValuePair<int, Earthquake>> filteredEarthquakes = Earthquakes;
+            IEnumerable<KeyValuePair<int, Earthquake>> filteredEarthquakes = _earthquakes;
             if (year != 0)
                 filteredEarthquakes = filteredEarthquakes.Where(item => item.Value.Date.Year == year);
             if (deaths != 0)
@@ -39,7 +39,7 @@ namespace Epicentrum.Controllers
 
         public Earthquake Details(int id)
         {
-            return Earthquakes[id];
+            return _earthquakes[id];
         }
 
         private string ToGeoJson(IEnumerable<KeyValuePair<int, Earthquake>> earthquakes)
