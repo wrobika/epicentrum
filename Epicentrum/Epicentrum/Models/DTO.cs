@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Epicentrum.Models;
+using Newtonsoft.Json;
 
 namespace Epicentrum.Models
 {
     public class DTO
     {
-        [JsonPropertyName("features")]
+        [JsonProperty(PropertyName = "features")]
         public IList<FeatureDTO> Features { get; set; }
     }
 
     public class FeatureDTO
     {
-        [JsonPropertyName("attributes")]
+        [JsonProperty(PropertyName = "attributes")]
         public AttributesDTO Attributes { get; set; }
 
-        [JsonPropertyName("geometry")]
+        [JsonProperty(PropertyName = "geometry")]
         public GeometryDTO Geolocation { get; set; }
 
         public Earthquake ToEarthquake()
@@ -41,27 +40,27 @@ namespace Epicentrum.Models
 
     public class AttributesDTO
     {
-        [JsonPropertyName("OBJECTID")]
+        [JsonProperty(PropertyName = "OBJECTID")]
         public int Id { get; set; }
 
-        [JsonPropertyName("Name")]
+        [JsonProperty(PropertyName = "Name")]
         public string Location { get; set; }
 
         public double? Magnitude { get; set; }
 
-        [JsonPropertyName("Num_Deaths")]
+        [JsonProperty(PropertyName = "Num_Deaths")]
         public int? Deaths { get; set; }
 
-        [JsonPropertyName("YYYYMMDD")]
+        [JsonProperty(PropertyName = "YYYYMMDD")]
         public string Date { get; set; }
     }
 
     public class GeometryDTO
     {
-        [JsonPropertyName("y")]
+        [JsonProperty(PropertyName = "y")]
         public double Latitude { get; set; }
 
-        [JsonPropertyName("x")]
+        [JsonProperty(PropertyName = "x")]
         public double Longitude { get; set; }
     }
 }

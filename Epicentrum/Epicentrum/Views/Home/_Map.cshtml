@@ -1,7 +1,7 @@
 ﻿<script>
     @{
-        @inject System.Net.Http.IHttpClientFactory clientFactory;
-        var earthquakeController = new Epicentrum.Controllers.EarthquakeController(clientFactory);
+        @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment environment;
+        var earthquakeController = new Epicentrum.Controllers.EarthquakeController(environment);
         var epicentrumGeojson = earthquakeController.GetEpicentrumsGeoJson();
     }
 

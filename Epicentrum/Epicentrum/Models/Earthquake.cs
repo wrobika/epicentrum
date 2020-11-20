@@ -20,15 +20,13 @@ namespace Epicentrum.Models
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
-        private const string ID = "id";
-        private const string COLOR = "color";
         public Feature ToFeature()
         {
             Point point = new Point(Longitude, Latitude);
             AttributesTable properties = new AttributesTable
             {
-                { ID, Id },
-                { COLOR, EpicentrumColor.FromMagnitude(Magnitude) }
+                { "id", Id },
+                { "color", EpicentrumColor.FromMagnitude(Magnitude) }
             };
             return new Feature(point, properties);
         }
