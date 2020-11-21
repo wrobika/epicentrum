@@ -1,12 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    await Html.RenderPartialAsync("_Map");
+    await Html.RenderPartialAsync("_FilterModal", new Filter());
+    await Html.RenderPartialAsync("_EarthquakeModal", new Earthquake());
 }
-
-<div>
-    <div id="map" class="map"></div>
-    @{
-        await Html.RenderPartialAsync("_Map");
-        await Html.RenderPartialAsync("_FilterModal", new Filter());
-        await Html.RenderPartialAsync("_EarthquakeModal", new Earthquake());
-    }
-</div>

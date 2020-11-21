@@ -1,4 +1,5 @@
-﻿<script>
+﻿<div id="map" class="map"></div>
+<script>
     @{
         @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment environment;
         var earthquakeController = new Epicentrum.Controllers.EarthquakeController(environment);
@@ -20,7 +21,7 @@
         source: epicentrumClusterSource,
         style: feature => { return getProperStyle(feature) }
     });
-    
+
     var backgroundLayer = new ol.layer.Tile({
         source: new ol.source.XYZ({
             url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
@@ -54,9 +55,6 @@
             image: new ol.style.RegularShape({
                 points: 5,
                 radius: 8,
-                stroke: new ol.style.Stroke({
-                    color: 'white'
-                }),
                 fill: new ol.style.Fill({
                     color: feature.get('color')
                 })
@@ -69,8 +67,8 @@
             image: new ol.style.Circle({
                 radius: 10 + Math.sqrt(size),
                 fill: new ol.style.Fill({
-                    color: '#dc3545'
-                })
+                    color: 'Coral'
+                }),
             }),
             text: new ol.style.Text({
                 text: size.toString(),
