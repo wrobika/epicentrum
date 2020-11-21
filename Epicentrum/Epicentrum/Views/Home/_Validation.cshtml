@@ -1,0 +1,23 @@
+﻿<script>
+    var yearInput = document.getElementById('yearInput');
+    var deathsInput = document.getElementById('deathsInput')
+    yearInput.oninput = disableButton;
+    deathsInput.oninput = disableButton;
+
+    function disableButton() {
+        if (correctYear() && correctDeaths())
+            document.getElementById('filterSubmit').disabled = false;
+        else
+            document.getElementById('filterSubmit').disabled = true;
+    }
+
+    function correctDeaths() {
+        var deaths = deathsInput.value;
+        return deaths === "" || deaths > 0;
+    }
+
+    function correctYear() {
+        var year = yearInput.value;
+        return year === "" || (year >= 1970 && year <= 2009);
+    }
+</script>

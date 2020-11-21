@@ -8,7 +8,7 @@ namespace Epicentrum.Models
 {
     public class Filter
     {
-        [Range(1970, 2020)]
+        [Range(1970, 2009)]
         public int? Year { get; set; }
 
         [Range(1, int.MaxValue)]
