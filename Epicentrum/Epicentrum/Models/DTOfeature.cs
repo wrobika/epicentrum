@@ -17,17 +17,31 @@ namespace Epicentrum.Models
 
         public Earthquake ToEarthquake()
         {
-            TextInfo textInfo = Thread.CurrentThread.CurrentCulture.TextInfo;
             return new Earthquake
             {
                 Id = Attributes.Id,
-                Location = textInfo.ToTitleCase(Attributes.Location.ToLower()),
-                Magnitude = Math.Round(Attributes.Magnitude.GetValueOrDefault(), 2),
+                Location = LocationToTitleCase(),
+                Magnitude = RoundMagnitude(),
                 Deaths = Attributes.Deaths,
                 Latitude = Geolocation.Latitude,
                 Longitude = Geolocation.Longitude,
                 Date = DateTime.ParseExact(Attributes.Date, "yyyyMMdd", CultureInfo.InvariantCulture)
             };
+        }
+
+        private string LocationToTitleCase()
+        {
+            string location = Attributes.Location.ToLower();
+            TextInfo textInfo = Thread.CurrentThread.CurrentCulture.TextInfo;
+            return textInfo.ToTitleCase(location);
+        }
+
+        private double? RoundMagnitude()
+        {
+            double? magnitude = Attributes.Magnitude;
+            if (magnitude.HasValue)
+                magnitude = Math.Round(Attributes.Magnitude.Value, 2);
+            return magnitude;
         }
     }
 }
