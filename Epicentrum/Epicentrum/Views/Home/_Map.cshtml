@@ -134,8 +134,8 @@
     }
 
     function applyFilter() {
-        var year = $('#yearFilter').val();
-        var deaths = $('#deathsFilter').val();
+        var year = $('#yearInput').val();
+        var deaths = $('#deathsInput').val();
         var url = "/Earthquake/GetEpicentrumsBy?year=" + year + "&deaths=" + deaths;
         getRequest(url, reloadFeatures);
         $('#filterModal').modal('hide');
@@ -145,8 +145,8 @@
         var url = "/Earthquake/GetEpicentrums";
         getRequest(url, reloadFeatures);
         $('#filterModal').modal('hide');
-        $('#yearFilter').val("");
-        $('#deathsFilter').val("");
+        $('#yearInput').val("");
+        $('#deathsInput').val("");
     }
 
     function reloadFeatures(geojson) {

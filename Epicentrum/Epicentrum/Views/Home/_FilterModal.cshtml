@@ -14,16 +14,40 @@
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-group">
                         <label asp-for="Year" class="control-label"></label>
-                        <input id="yearFilter" asp-for="Year" class="form-control" />
+                        <input id="yearInput" asp-for="Year" class="form-control" />
                         <span asp-validation-for="Year" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Deaths" class="control-label"></label>
-                        <input id="deathsFilter" asp-for="Deaths" class="form-control" />
+                        <input id="deathsInput" asp-for="Deaths" class="form-control" />
                         <span asp-validation-for="Deaths" class="text-danger"></span>
                     </div>
                     <button id="filterSubmit" type="button" class="btn btn-outline-light btn-block" style="background-color:coral;" onclick="applyFilter()">Apply filters</button>
                     <button id="filterRemove" type="button" class="btn btn-dark btn-block" onclick="removeFilter()">Remove filters</button>
+                
+                    <script>
+                        var yearInput = document.getElementById('yearInput');
+                        var deathsInput = document.getElementById('deathsInput')
+                        yearInput.oninput = disableButton;
+                        deathsInput.oninput = disableButton;
+
+                        function disableButton() {
+                            if (correctYear() && correctDeaths())
+                                document.getElementById('filterSubmit').disabled = false;
+                            else
+                                document.getElementById('filterSubmit').disabled = true;
+                        }
+
+                        function correctDeaths() {
+                            var deaths = deathsInput.value;
+                            return deaths === "" || deaths > 0
+                        }
+
+                        function correctYear() {
+                            var year = yearInput.value;
+                            return year === "" || (year >= 1970 && year <= 2020)
+                        }
+                    </script>
                 </form>
             </div>
         </div>

@@ -11,7 +11,7 @@ namespace Epicentrum.Models
         [Range(1970, 2020)]
         public int? Year { get; set; }
 
-        [Range(0, int.MaxValue)]
+        [Range(1, int.MaxValue)]
         public int? Deaths { get; set; }
     }
 }
