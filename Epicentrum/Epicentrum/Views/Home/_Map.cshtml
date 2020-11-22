@@ -1,24 +1,14 @@
 ﻿<div id="map" class="map"></div>
 <script>
-    @{
-        @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment environment;
-        var earthquakeController = new Epicentrum.Controllers.EarthquakeController(environment);
-        var epicentrumGeojson = earthquakeController.GetEpicentrums();
-    }
-
-    var epicentrumGeojson = @Html.Raw(Json.Serialize(epicentrumGeojson));
-
-    var epicentrumSource = new ol.source.Vector({
-        features: getFeatures(epicentrumGeojson)
-    });
-
-    var epicentrumClusterSource = new ol.source.Cluster({
+    var epicentrumSource = new ol.source.Cluster({
         distance: 20,
-        source: epicentrumSource
+        source: new ol.source.Vector()
     });
+
+    getRequest('/Earthquake/GetEpicentrums', loadFeatures);
 
     var epicentrumLayer = new ol.layer.Vector({
-        source: epicentrumClusterSource,
+        source: epicentrumSource,
         style: feature => { return getProperStyle(feature) }
     });
 
@@ -32,11 +22,29 @@
         target: 'map',
         controls: [],
         layers: [backgroundLayer, epicentrumLayer],
+        moveTolerance: 10,
         view: new ol.View({
             center: ol.proj.fromLonLat([0, 10]),
             zoom: 1
         })
     });
+
+    function getRequest(url, succesFunction) {
+        $.ajax({
+            contentType: "application/json; charset=utf-8",
+            type: "GET",
+            url: url,
+            cache: false,
+            success: data => { succesFunction(data) },
+            error: jqXHR => { console.log(jqXHR) }
+        });
+    }
+
+    function loadFeatures(geojson) {
+        var newFeatures = getFeatures(geojson);
+        epicentrumSource.getSource().clear();
+        epicentrumSource.getSource().addFeatures(newFeatures);
+    }
 
     function getFeatures(geojson) {
         var geojsonReader = new ol.format.GeoJSON();
@@ -105,17 +113,6 @@
         }
     }
 
-    function getRequest(url, succesFunction) {
-        $.ajax({
-            contentType: "application/json; charset=utf-8",
-            type: "GET",
-            url: url,
-            cache: false,
-            success: data => { succesFunction(data) },
-            error: jqXHR => { console.log(jqXHR) }
-        });
-    }
-
     function fillModal(details) {
         document.getElementById('date').innerText = details.date.substring(0, details.date.indexOf('T'));
         document.getElementById('location').innerText = details.location;
@@ -137,22 +134,15 @@
         var year = $('#yearInput').val();
         var deaths = $('#deathsInput').val();
         var url = "/Earthquake/GetEpicentrumsBy?year=" + year + "&deaths=" + deaths;
-        getRequest(url, reloadFeatures);
+        getRequest(url, loadFeatures);
         $('#filterModal').modal('hide');
     }
 
     function removeFilter() {
         var url = "/Earthquake/GetEpicentrums";
-        getRequest(url, reloadFeatures);
+        getRequest(url, loadFeatures);
         $('#filterModal').modal('hide');
         $('#yearInput').val("");
         $('#deathsInput').val("");
     }
-
-    function reloadFeatures(geojson) {
-        var newFeatures = getFeatures(geojson);
-        epicentrumLayer.getSource().getSource().clear();
-        epicentrumLayer.getSource().getSource().addFeatures(newFeatures);
-    }
-
 </script>

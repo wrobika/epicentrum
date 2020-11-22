@@ -11,18 +11,12 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <style>
-        .map {
-            height: 400px;
-            width: 100%;
-        }
-    </style>
 </head>
 <body>
     <header>
         <nav class="navbar navbar-light bg-light border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand font-weight-bold" style="color:coral;" asp-area="" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand font-weight-bold" style="color:coral" asp-area="" asp-controller="Home" asp-action="Index">
                     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="" role="img" viewBox="0 0 24 24" focusable="false">
                         <circle cx="12" cy="12" r="16" stroke="white" stroke-width="1" fill="coral" />
                         <circle cx="12" cy="12" r="12" stroke="white" stroke-width="1" fill="coral" />
@@ -32,7 +26,7 @@
                     </svg>
                     Epicentrum
                 </a>
-                <button id="filter" type="button" class="btn btn-outline-light float-right" style="background-color:coral;" data-toggle="modal" data-target="#filterModal">Filter</button>
+                <button id="filter" type="button" class="btn btn-outline-light float-right bg-coral" data-toggle="modal" data-target="#filterModal">Filter</button>
             </div>
         </nav>
     </header>
@@ -43,7 +37,7 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container" style="color:coral;">
+        <div class="container text-coral">
             &copy; 2020 - Weronika Naziemiec
         </div>
     </footer>
