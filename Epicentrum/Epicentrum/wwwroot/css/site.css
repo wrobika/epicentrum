@@ -73,6 +73,12 @@ body {
 .bg-coral {
     background-color: coral;
 }
+.bg-coral:disabled {
+    background-color: coral;
+}
+.bg-coral:hover {
+    background-color: coral;
+}
 
 .text-coral {
     color: coral;
